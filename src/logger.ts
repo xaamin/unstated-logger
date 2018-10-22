@@ -13,7 +13,7 @@ class Logger {
   private __containers: any
   logger: any
   colors: Object
-  actions: string[]
+  details: string[]
   ignore: string[]
   private __counter: Number
   private __reduxDevInstances: any
@@ -24,13 +24,13 @@ class Logger {
     this.detailed = true
     this.logger = console
     this.ignore = ['JUMP_TO_STATE', 'JUMP_TO_ACTION']
-    this.actions = ['added', 'updated', 'deleted']
+    this.details = ['added', 'updated', 'deleted']
     this.__containers = {}
     this.__counter = 1
   }
 
   config(config: any) {
-    const available = ['colors', 'collapsed', 'detailed', 'logger', 'ignore', 'actions']
+    const available = ['colors', 'collapsed', 'detailed', 'logger', 'ignore', 'details']
 
     for (const key of available) {
       const value = config[key]
@@ -162,8 +162,8 @@ class Logger {
     if (this.detailed) {
       const diff = (differ as any).detailedDiff(prevState, state)
 
-      for (const i in this.actions) {
-        const kind = this.actions[i]
+      for (const i in this.details) {
+        const kind = this.details[i]
         const value = Object.assign({}, diff[kind])
 
         delete value.__action
