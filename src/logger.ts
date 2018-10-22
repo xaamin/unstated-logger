@@ -10,7 +10,7 @@ if (typeof window !== 'undefined' && process.env.NODE_ENV !== 'production') {
 class Logger {
   collapsed: boolean
   detailed: boolean
-  private containers: any
+  private __containers: any
   logger: any
   colors: Object
   actions: string[]
@@ -22,26 +22,51 @@ class Logger {
     this.colors = colors
     this.collapsed = false
     this.detailed = true
-    this.containers = {}
     this.logger = console
     this.ignore = ['JUMP_TO_STATE', 'JUMP_TO_ACTION']
     this.actions = ['added', 'updated', 'deleted']
+    this.__containers = {}
     this.__counter = 1
+  }
+
+  config(config: any) {
+    const available = ['colors', 'collapsed', 'detailed', 'logger', 'ignore', 'actions']
+
+    for (const key of available) {
+      const value = config[key]
+
+      if (value !== undefined) {
+        ;(this as any)[key] = value
+      }
+    }
   }
 
   store() {
     const store: any = {}
 
-    for (const [key, value] of Object.entries(this.containers)) {
+    for (const [key, value] of Object.entries(this.__containers)) {
       store[key] = (value as any).container.state
     }
 
     return store
   }
 
+  containers() {
+    const containers: any = {}
+
+    for (const [key, value] of Object.entries(this.__containers)) {
+      containers[key] = (value as any).container
+    }
+
+    return containers
+  }
+
   print() {
-    for (const [key, value] of Object.entries(this.containers)) {
-      console.log(`%c ${key}\n`, 'font-weight:bold', (value as any).container.state)
+    const color = (this.colors as any).title
+    const style = `color: ${color}; font-weight: bold`
+
+    for (const [key, value] of Object.entries(this.__containers)) {
+      console.log(`%c ${key} → `, style, (value as any).container.state)
     }
   }
 
@@ -71,16 +96,16 @@ class Logger {
           const name = container.name || container.constructor.name
           const action = state.__action
 
-          if (!this.containers[name]) {
+          if (!this.__containers[name]) {
             this.connect(
               name,
               container
             )
           }
 
-          this.logToConsole(this.containers[name], prevState, state)
+          this.logToConsole(this.__containers[name], prevState, state)
 
-          this.emitStateChangesToReduxDevTools(this.containers[name], state)
+          this.emitStateChangesToReduxDevTools(this.__containers[name], state)
 
           prevState = state
         })
@@ -94,7 +119,7 @@ class Logger {
 
     container.name = name
 
-    this.containers[name] = {
+    this.__containers[name] = {
       container,
       instance
     }
@@ -107,9 +132,9 @@ class Logger {
       instance = (window as any).__REDUX_DEVTOOLS_EXTENSION__.connect({ name })
       instance.init()
 
-      this.containers[name].instance = instance
+      this.__containers[name].instance = instance
 
-      this.subscribeToReduxDevToolsEvents(this.containers[name])
+      this.subscribeToReduxDevToolsEvents(this.__containers[name])
     }
   }
 
@@ -119,7 +144,6 @@ class Logger {
 
     const colors = this.colors as any
     const jump = container.container.__jump
-    const diff = (differ as any).detailedDiff(prevState, state)
     const group = this.collapsed ? console.groupCollapsed : console.group
     const titleStyle = ['color: gray; font-weight: lighter;']
 
@@ -136,6 +160,8 @@ class Logger {
     console.log('%c PREV STATE:', stylesPrevState, oldState)
 
     if (this.detailed) {
+      const diff = (differ as any).detailedDiff(prevState, state)
+
       for (const i in this.actions) {
         const kind = this.actions[i]
         const value = Object.assign({}, diff[kind])
