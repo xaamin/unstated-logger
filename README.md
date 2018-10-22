@@ -1,6 +1,6 @@
 ## Unstated logger
 
-Debug your [unstated](https://github.com/jamiebuilds/unstated) containers easily with `Unstated logger` who adds support for redux dev tools. The integration with the `redux dev tools` plugin makes jumping from different state in time possible (time travel).
+Debug your [unstated](https://github.com/jamiebuilds/unstated) containers easily with `unstated-logger` who adds support for redux dev tools. The integration with the `redux dev tools` plugin makes jumping from different state in time possible (time travel).
 
 <br>
 <img src="assets/screenshot.png" width="1145">
@@ -9,19 +9,19 @@ Debug your [unstated](https://github.com/jamiebuilds/unstated) containers easily
 ## Install
 
 ```bash
-npm install @xaamin/unstated-logger
+npm install --save unstated-logger
 
 # or
 
-yarn install @xaamin/unstated-logger
+yarn install --save unstated-logger
 ```
 
 ## Usage
 
-In the root of your app, import **Unstated logger**:
+In the root of your app, import unstated-logger`:
 
 ```js
-import Logger from '@xaamin/unstated-logger';
+import Logger from 'unstated-logger';
 
 Logger.start();
 
@@ -71,7 +71,7 @@ class CounterContainer extends Container<CounterState> {
 
 ## API
 
-When logger started, it exposes some methods and config options so you can use in DevTools to explore the containers or their state.
+After logger get staterted it exposes some methods and config options so you can explore the containers or their states in the Dev Tools panel.
 
 ```js
 // Get all the states in the store
@@ -88,9 +88,41 @@ Logger.print();
 
 The logger accepts the following config options:
 
-- `colors`: Color object Object for logging
-- `collapsed`: Boolean, defaults to false
-- `detailed`: Boolean, defaults to true
-- `logger`: Custom logger, defaults to `console`
-- `ignore`: Events to be ignored for redux dev tools notifications
-- `actions`: Logger state changes
+## Config
+
+```js
+const config = {
+  collapsed: true,
+  detailed: false,
+};
+
+Logger.config(config);
+```
+
+#### collapsed
+Type: `boolean`
+<br>
+Default: `false`
+
+Collapse the state change logs in the Dev Tools console.
+
+#### detailed
+Type: `boolean`
+<br>
+Default: `true`
+
+Log detailed state changes (Added, deleted and changed).
+
+#### ignore
+Type: `array`
+<br>
+Default: `['JUMP_TO_STATE', 'JUMP_TO_ACTION']`
+
+Actions to be ignored in the redux Dev Tools notifications.
+
+#### details
+Type: `array`
+<br>
+Default: `['added', 'updated', 'deleted']`
+
+The log level detail to show up in the Dev Tools console. Allowed values `added`, `updated` and `deleted`.
