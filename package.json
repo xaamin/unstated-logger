@@ -1,15 +1,20 @@
 {
-  "name": "@xaamin/unstated-logger",
-  "version": "1.0.1",
+  "name": "unstated-logger",
+  "version": "1.0.0",
   "description": "",
-  "keywords": [],
+  "keywords": [
+    "unstated",
+    "logger",
+    "debug",
+    "log"
+  ],
   "main": "dist/unstated-logger.js",
   "module": "dist/unstated-logger.es.js",
   "typings": "dist/types/index.d.ts",
   "files": [
     "dist"
   ],
-  "author": "Ben <xaamin@outlook.com>",
+  "author": "Ben <benxaamin@outlook.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/xaamin/unstated-logger.git"
